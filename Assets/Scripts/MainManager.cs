@@ -2,13 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using Mono.Cecil.Cil;
+using static UnityEditor.PlayerSettings;
+using static UnityEngine.Rendering.DebugUI.Table;
+using UnityEditor.PackageManager;
 
 public class MainManager : MonoBehaviour
 {
-    public static MainManager Instance;
+    // As soon as you add a get or set accessor to a variable, that variable becomes a Property.
+    // It provides access to internal data through these specialized methods. 
+    // Without a set accessor, this property is strictly read-only, its value cannot be set anywhere.
+    // This is good because we don’t want any other classes to be able to reset it or alter it.
 
+    // Since the property is strictly read-only now, it can’t even be set in its own class.
+    // This is causing an error lower down in MainManager.cs on the line Instance = this;.
+    // To fix this, add a private setter to the property, which should resolve that error.
+
+    // You can now set the property’s value from within the class, but only get it from outside the class.
+    // It’s encapsulated to only accept modifications from its own class.
+    // This getter and setter represents the most basic form of encapsulation, where you are simply getting or setting the value.
+    // This simple implementation is called an auto-implemented property.
+    public static MainManager Instance { get; private set; }
     public Color TeamColor;
-
     private void Awake()
     {
         /* This pattern is called a singleton. You use it to ensure that only a single instance 
@@ -18,10 +33,8 @@ public class MainManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
         LoadColor();
     }
 
